@@ -411,29 +411,80 @@ function Results() {
 }
 
 /* -------------------- Rate Your Experience -------------------- */
-type RatingSubmission = { stars: number; text: string; name: string };
+type RatingSubmission = { id?: string; stars: number; text: string; name: string };
 
 function RateExperience() {
   const [stars, setStars] = useState(0);
   const [hover, setHover] = useState(0);
   const [text, setText] = useState("");
   const [name, setName] = useState("");
-  const [reviews, setReviews] = useState<RatingSubmission[]>([
-    { stars: 5, text: "Best trading mentorship I've ever joined. Crystal clear setups every week.", name: "Hamza" },
-    { stars: 5, text: "Risk management lessons alone are worth the price. Highly recommended.", name: "Sara" },
-    { stars: 5, text: "Sir Ahsan's discipline-first approach changed how I see the market.", name: "Bilal" },
-  ]);
+  const [submitting, setSubmitting] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [reviews, setReviews] = useState<RatingSubmission[]>([]);
+
+  useEffect(() => {
+    let mounted = true;
+    supabase
+      .from("reviews")
+      .select("id,name,rating,message")
+      .order("created_at", { ascending: false })
+      .limit(100)
+      .then(({ data }) => {
+        if (!mounted || !data) return;
+        setReviews(data.map((r) => ({ id: r.id, stars: r.rating, text: r.message, name: r.name })));
+      });
+
+    const channel = supabase
+      .channel("reviews-realtime")
+      .on(
+        "postgres_changes",
+        { event: "INSERT", schema: "public", table: "reviews" },
+        (payload) => {
+          const r = payload.new as { id: string; name: string; rating: number; message: string };
+          setReviews((prev) =>
+            prev.some((x) => x.id === r.id)
+              ? prev
+              : [{ id: r.id, stars: r.rating, text: r.message, name: r.name }, ...prev],
+          );
+        },
+      )
+      .subscribe();
+
+    return () => {
+      mounted = false;
+      supabase.removeChannel(channel);
+    };
+  }, []);
 
   const avg = reviews.length
     ? (reviews.reduce((a, r) => a + r.stars, 0) / reviews.length).toFixed(1)
     : "0.0";
 
-  const onSubmit = (e: FormEvent) => {
+  const onSubmit = async (e: FormEvent) => {
     e.preventDefault();
-    if (!stars || !text.trim() || !name.trim()) return;
-    setReviews((p) => [{ stars, text: text.trim(), name: name.trim() }, ...p]);
+    if (!stars || !text.trim() || !name.trim() || submitting) return;
+    setSubmitting(true);
+    setError(null);
+    const { data, error: insertError } = await supabase
+      .from("reviews")
+      .insert({ name: name.trim(), rating: stars, message: text.trim() })
+      .select("id,name,rating,message")
+      .single();
+    setSubmitting(false);
+    if (insertError) {
+      setError("Could not submit review. Please try again.");
+      return;
+    }
+    if (data) {
+      setReviews((p) =>
+        p.some((x) => x.id === data.id)
+          ? p
+          : [{ id: data.id, stars: data.rating, text: data.message, name: data.name }, ...p],
+      );
+    }
     setStars(0); setHover(0); setText(""); setName("");
   };
+
 
   return (
     <section id="rate" className="relative py-16 md:py-24">
