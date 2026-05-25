@@ -1,5 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useCallback, useEffect, useState, FormEvent } from "react";
+import { supabase } from "@/integrations/supabase/client";
 import {
   TrendingUp, LineChart, Users, Radio, ShieldCheck,
   Brain, BarChart3, Instagram, Facebook, Youtube,
