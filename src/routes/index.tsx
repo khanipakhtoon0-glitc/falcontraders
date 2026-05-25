@@ -556,12 +556,14 @@ function RateExperience() {
 
           <button
             type="submit"
-            disabled={!stars || !text.trim() || !name.trim()}
+            disabled={!stars || !text.trim() || !name.trim() || submitting}
             className="w-full inline-flex items-center justify-center gap-2 px-7 py-4 rounded-xl gold-gradient text-black font-bold hover:glow-gold hover:scale-[1.02] transition disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
           >
-            Submit Review <ArrowRight className="h-5 w-5" />
+            {submitting ? "Submitting..." : "Submit Review"} <ArrowRight className="h-5 w-5" />
           </button>
+          {error && <p className="text-center text-sm text-red-400">{error}</p>}
         </form>
+
 
         <div className="mt-10 grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-5">
           {reviews.map((r, i) => (
