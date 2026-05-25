@@ -4,8 +4,13 @@ import {
   TrendingUp, LineChart, Users, Radio, ShieldCheck,
   Brain, BarChart3, Instagram, Facebook, Youtube,
   Phone, Mail, User, MessageCircle, ArrowRight, Sparkles, PlayCircle,
-  Star, Award, CheckCircle2, Plus, Minus, Trophy,
+  Star, Award, CheckCircle2, Plus, Minus, Trophy, ChevronLeft, ChevronRight, X,
 } from "lucide-react";
+import result1 from "@/assets/result-1.jpg";
+import result2 from "@/assets/result-2.jpg";
+import result3 from "@/assets/result-3.jpg";
+import result4 from "@/assets/result-4.jpg";
+import result5 from "@/assets/result-5.jpg";
 
 import heroBg from "@/assets/hero-bg.jpg";
 import logo from "@/assets/logo.jpg";
@@ -197,6 +202,14 @@ function Hero() {
             Explore Curriculum
           </a>
         </div>
+
+        {/* Community members stats card — matches StatsBar styling */}
+        <div className="mt-6 md:mt-8 max-w-md mx-auto">
+          <div className="glass-dark rounded-2xl md:rounded-3xl p-5 md:p-8 text-center group">
+            <div className="font-display text-3xl md:text-5xl text-gold-gradient group-hover:scale-110 transition">8K+</div>
+            <div className="mt-1.5 text-[10px] md:text-xs text-muted-foreground uppercase tracking-widest">Community Members</div>
+          </div>
+        </div>
       </div>
     </section>
   );
@@ -277,32 +290,240 @@ function Courses() {
   );
 }
 
-/* -------------------- Live Trading Results -------------------- */
+/* -------------------- Live Trading Results — Auto-Slide Carousel -------------------- */
+const RESULT_IMAGES = [result1, result2, result3, result4, result5];
+
 function Results() {
+  const [idx, setIdx] = useState(0);
+  const [lightbox, setLightbox] = useState<string | null>(null);
+  const total = RESULT_IMAGES.length;
+
+  const go = useCallback((n: number) => setIdx((n + total) % total), [total]);
+
+  useEffect(() => {
+    if (lightbox) return;
+    const t = setInterval(() => setIdx((i) => (i + 1) % total), 2000);
+    return () => clearInterval(t);
+  }, [total, lightbox]);
+
+  useEffect(() => {
+    if (!lightbox) return;
+    const onKey = (e: KeyboardEvent) => { if (e.key === "Escape") setLightbox(null); };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [lightbox]);
+
   return (
     <section id="results" className="relative py-16 md:py-24">
       <div className="mx-auto max-w-6xl px-4 md:px-8">
-        <SectionHeading eyebrow="Verified Trades" title="Live Trading Results" sub="A glimpse of recent setups shared inside our community." />
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-5">
-          {RESULTS.map((r) => (
-            <div key={r.pair} className="group relative bg-[#0a0f1c]/85 rounded-2xl p-5 md:p-6 border border-[#f5c545]/25 hover:border-[#34ffb0]/60 hover:-translate-y-1 transition duration-500 overflow-hidden">
-              <div className="absolute top-0 right-0 w-24 h-24 rounded-full bg-[#34ffb0]/10 blur-2xl group-hover:bg-[#34ffb0]/20 transition" />
-              <div className="relative">
-                <div className="flex items-center gap-2 text-[10px] uppercase tracking-widest text-muted-foreground">
-                  <Trophy className="h-3.5 w-3.5 text-gold" /> Verified Trade
-                </div>
-                <div className="mt-3 font-display text-lg md:text-xl text-gold-gradient">{r.pair}</div>
-                <div className="mt-1 text-xs md:text-sm text-foreground/70">{r.type}</div>
-                <div className="mt-5 font-display text-2xl md:text-3xl text-[#34ffb0] glow-text-neon flex items-center gap-2">
-                  <TrendingUp className="h-5 w-5" /> {r.profit}
-                </div>
-              </div>
+        <SectionHeading
+          eyebrow="Verified Trades"
+          title="Live Trading Results"
+          sub="Real performance snapshots from our crypto trading journey."
+        />
+
+        <div className="relative max-w-3xl mx-auto">
+          <div className="relative rounded-3xl overflow-hidden border border-[#f5c545]/30 glow-gold bg-[#0a0f1c]/80">
+            <div
+              className="flex transition-transform duration-700 ease-in-out"
+              style={{ transform: `translateX(-${idx * 100}%)` }}
+            >
+              {RESULT_IMAGES.map((src, i) => (
+                <button
+                  key={i}
+                  type="button"
+                  onClick={() => setLightbox(src)}
+                  className="shrink-0 w-full aspect-[4/5] sm:aspect-[16/10] bg-[#05070d] flex items-center justify-center cursor-zoom-in"
+                  aria-label={`Open trading result ${i + 1}`}
+                >
+                  <img
+                    src={src}
+                    alt={`Trading result ${i + 1}`}
+                    loading="lazy"
+                    className="w-full h-full object-contain"
+                  />
+                </button>
+              ))}
             </div>
-          ))}
+
+            <button
+              type="button"
+              onClick={() => go(idx - 1)}
+              aria-label="Previous"
+              className="absolute left-2 md:left-4 top-1/2 -translate-y-1/2 h-10 w-10 md:h-12 md:w-12 rounded-full gold-gradient text-black flex items-center justify-center hover:scale-110 transition glow-gold"
+            >
+              <ChevronLeft className="h-5 w-5 md:h-6 md:w-6" />
+            </button>
+            <button
+              type="button"
+              onClick={() => go(idx + 1)}
+              aria-label="Next"
+              className="absolute right-2 md:right-4 top-1/2 -translate-y-1/2 h-10 w-10 md:h-12 md:w-12 rounded-full gold-gradient text-black flex items-center justify-center hover:scale-110 transition glow-gold"
+            >
+              <ChevronRight className="h-5 w-5 md:h-6 md:w-6" />
+            </button>
+          </div>
+
+          <div className="mt-5 flex justify-center gap-2">
+            {RESULT_IMAGES.map((_, i) => (
+              <button
+                key={i}
+                type="button"
+                aria-label={`Go to slide ${i + 1}`}
+                onClick={() => go(i)}
+                className={`h-2 rounded-full transition-all ${i === idx ? "w-8 gold-gradient glow-gold" : "w-2 bg-white/30 hover:bg-white/60"}`}
+              />
+            ))}
+          </div>
         </div>
+
         <p className="mt-8 text-center text-[11px] md:text-xs text-muted-foreground italic">
           Past results do not guarantee future performance.
         </p>
+      </div>
+
+      {lightbox && (
+        <div
+          className="fixed inset-0 z-[60] bg-black/90 backdrop-blur-sm flex items-center justify-center p-4 animate-fade-up"
+          onClick={() => setLightbox(null)}
+          role="dialog"
+          aria-modal="true"
+        >
+          <button
+            type="button"
+            onClick={() => setLightbox(null)}
+            aria-label="Close"
+            className="absolute top-4 right-4 h-11 w-11 rounded-full gold-gradient text-black flex items-center justify-center hover:scale-110 transition"
+          >
+            <X className="h-5 w-5" />
+          </button>
+          <img
+            src={lightbox}
+            alt="Trading result enlarged"
+            className="max-h-[90vh] max-w-[95vw] object-contain rounded-2xl border border-[#f5c545]/40 glow-gold"
+            onClick={(e) => e.stopPropagation()}
+          />
+        </div>
+      )}
+    </section>
+  );
+}
+
+/* -------------------- Rate Your Experience -------------------- */
+type RatingSubmission = { stars: number; text: string; name: string };
+
+function RateExperience() {
+  const [stars, setStars] = useState(0);
+  const [hover, setHover] = useState(0);
+  const [text, setText] = useState("");
+  const [name, setName] = useState("");
+  const [reviews, setReviews] = useState<RatingSubmission[]>([
+    { stars: 5, text: "Best trading mentorship I've ever joined. Crystal clear setups every week.", name: "Hamza" },
+    { stars: 5, text: "Risk management lessons alone are worth the price. Highly recommended.", name: "Sara" },
+    { stars: 5, text: "Sir Ahsan's discipline-first approach changed how I see the market.", name: "Bilal" },
+  ]);
+
+  const avg = reviews.length
+    ? (reviews.reduce((a, r) => a + r.stars, 0) / reviews.length).toFixed(1)
+    : "0.0";
+
+  const onSubmit = (e: FormEvent) => {
+    e.preventDefault();
+    if (!stars || !text.trim() || !name.trim()) return;
+    setReviews((p) => [{ stars, text: text.trim(), name: name.trim() }, ...p]);
+    setStars(0); setHover(0); setText(""); setName("");
+  };
+
+  return (
+    <section id="rate" className="relative py-16 md:py-24">
+      <div className="mx-auto max-w-5xl px-4 md:px-8">
+        <SectionHeading eyebrow="Your Voice Matters" title="Rate Your Experience" />
+
+        <div className="text-center mb-10">
+          <div className="inline-flex items-center gap-3 glass-dark rounded-2xl px-6 py-4 glow-gold">
+            <div className="flex gap-1 text-gold">
+              {Array.from({ length: 5 }).map((_, k) => (
+                <Star key={k} className="h-5 w-5 fill-current" />
+              ))}
+            </div>
+            <div className="font-display text-xl md:text-2xl text-gold-gradient">{avg} / 5</div>
+            <div className="text-xs uppercase tracking-widest text-muted-foreground">
+              based on {reviews.length} review{reviews.length === 1 ? "" : "s"}
+            </div>
+          </div>
+        </div>
+
+        <form onSubmit={onSubmit} className="glass-dark rounded-3xl p-6 md:p-9 space-y-5 max-w-2xl mx-auto border border-[#f5c545]/30">
+          <div className="text-center">
+            <div className="text-xs uppercase tracking-widest text-muted-foreground mb-3">Your Rating</div>
+            <div className="flex justify-center gap-1.5">
+              {Array.from({ length: 5 }).map((_, i) => {
+                const v = i + 1;
+                const active = (hover || stars) >= v;
+                return (
+                  <button
+                    key={v}
+                    type="button"
+                    onMouseEnter={() => setHover(v)}
+                    onMouseLeave={() => setHover(0)}
+                    onClick={() => setStars(v)}
+                    aria-label={`${v} star${v === 1 ? "" : "s"}`}
+                    className="p-1 transition-transform hover:scale-125"
+                  >
+                    <Star className={`h-8 w-8 md:h-10 md:w-10 transition ${active ? "text-gold fill-current drop-shadow-[0_0_10px_rgba(245,197,69,0.6)]" : "text-white/25"}`} />
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+
+          <label className="block">
+            <span className="text-xs uppercase tracking-widest text-muted-foreground">Your Name</span>
+            <input
+              required
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              maxLength={60}
+              placeholder="Your name"
+              className="mt-2 w-full bg-white/5 border border-[#f5c545]/30 rounded-xl px-4 py-3 outline-none focus:border-[#f5c545]/70 focus:glow-gold transition text-foreground placeholder:text-muted-foreground/50"
+            />
+          </label>
+
+          <label className="block">
+            <span className="text-xs uppercase tracking-widest text-muted-foreground">Your Review</span>
+            <textarea
+              required
+              value={text}
+              onChange={(e) => setText(e.target.value)}
+              rows={4}
+              maxLength={500}
+              placeholder="Share your experience..."
+              className="mt-2 w-full bg-white/5 border border-[#f5c545]/30 rounded-xl px-4 py-3 outline-none focus:border-[#f5c545]/70 focus:glow-gold transition text-foreground placeholder:text-muted-foreground/50"
+            />
+          </label>
+
+          <button
+            type="submit"
+            disabled={!stars || !text.trim() || !name.trim()}
+            className="w-full inline-flex items-center justify-center gap-2 px-7 py-4 rounded-xl gold-gradient text-black font-bold hover:glow-gold hover:scale-[1.02] transition disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
+          >
+            Submit Review <ArrowRight className="h-5 w-5" />
+          </button>
+        </form>
+
+        <div className="mt-10 grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-5">
+          {reviews.map((r, i) => (
+            <div key={i} className="glass-dark rounded-2xl p-5 md:p-6 border border-[#f5c545]/25 hover:border-[#f5c545]/60 transition">
+              <div className="flex gap-0.5 text-gold mb-2">
+                {Array.from({ length: 5 }).map((_, k) => (
+                  <Star key={k} className={`h-4 w-4 ${k < r.stars ? "fill-current" : "opacity-25"}`} />
+                ))}
+              </div>
+              <p className="text-sm text-foreground/85 leading-relaxed">"{r.text}"</p>
+              <div className="mt-3 font-display text-sm text-gold-gradient">— {r.name}</div>
+            </div>
+          ))}
+        </div>
       </div>
     </section>
   );
@@ -588,6 +809,7 @@ function Index() {
         <Courses />
         <Results />
         <StudentReviews />
+        <RateExperience />
         <Community />
         <FAQ />
         <Social />
