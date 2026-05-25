@@ -1,5 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useCallback, useEffect, useState, FormEvent } from "react";
+import { supabase } from "@/integrations/supabase/client";
 import {
   TrendingUp, LineChart, Users, Radio, ShieldCheck,
   Brain, BarChart3, Instagram, Facebook, Youtube,
@@ -410,29 +411,80 @@ function Results() {
 }
 
 /* -------------------- Rate Your Experience -------------------- */
-type RatingSubmission = { stars: number; text: string; name: string };
+type RatingSubmission = { id?: string; stars: number; text: string; name: string };
 
 function RateExperience() {
   const [stars, setStars] = useState(0);
   const [hover, setHover] = useState(0);
   const [text, setText] = useState("");
   const [name, setName] = useState("");
-  const [reviews, setReviews] = useState<RatingSubmission[]>([
-    { stars: 5, text: "Best trading mentorship I've ever joined. Crystal clear setups every week.", name: "Hamza" },
-    { stars: 5, text: "Risk management lessons alone are worth the price. Highly recommended.", name: "Sara" },
-    { stars: 5, text: "Sir Ahsan's discipline-first approach changed how I see the market.", name: "Bilal" },
-  ]);
+  const [submitting, setSubmitting] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [reviews, setReviews] = useState<RatingSubmission[]>([]);
+
+  useEffect(() => {
+    let mounted = true;
+    supabase
+      .from("reviews")
+      .select("id,name,rating,message")
+      .order("created_at", { ascending: false })
+      .limit(100)
+      .then(({ data }) => {
+        if (!mounted || !data) return;
+        setReviews(data.map((r) => ({ id: r.id, stars: r.rating, text: r.message, name: r.name })));
+      });
+
+    const channel = supabase
+      .channel("reviews-realtime")
+      .on(
+        "postgres_changes",
+        { event: "INSERT", schema: "public", table: "reviews" },
+        (payload) => {
+          const r = payload.new as { id: string; name: string; rating: number; message: string };
+          setReviews((prev) =>
+            prev.some((x) => x.id === r.id)
+              ? prev
+              : [{ id: r.id, stars: r.rating, text: r.message, name: r.name }, ...prev],
+          );
+        },
+      )
+      .subscribe();
+
+    return () => {
+      mounted = false;
+      supabase.removeChannel(channel);
+    };
+  }, []);
 
   const avg = reviews.length
     ? (reviews.reduce((a, r) => a + r.stars, 0) / reviews.length).toFixed(1)
     : "0.0";
 
-  const onSubmit = (e: FormEvent) => {
+  const onSubmit = async (e: FormEvent) => {
     e.preventDefault();
-    if (!stars || !text.trim() || !name.trim()) return;
-    setReviews((p) => [{ stars, text: text.trim(), name: name.trim() }, ...p]);
+    if (!stars || !text.trim() || !name.trim() || submitting) return;
+    setSubmitting(true);
+    setError(null);
+    const { data, error: insertError } = await supabase
+      .from("reviews")
+      .insert({ name: name.trim(), rating: stars, message: text.trim() })
+      .select("id,name,rating,message")
+      .single();
+    setSubmitting(false);
+    if (insertError) {
+      setError("Could not submit review. Please try again.");
+      return;
+    }
+    if (data) {
+      setReviews((p) =>
+        p.some((x) => x.id === data.id)
+          ? p
+          : [{ id: data.id, stars: data.rating, text: data.message, name: data.name }, ...p],
+      );
+    }
     setStars(0); setHover(0); setText(""); setName("");
   };
+
 
   return (
     <section id="rate" className="relative py-16 md:py-24">
@@ -504,16 +556,18 @@ function RateExperience() {
 
           <button
             type="submit"
-            disabled={!stars || !text.trim() || !name.trim()}
+            disabled={!stars || !text.trim() || !name.trim() || submitting}
             className="w-full inline-flex items-center justify-center gap-2 px-7 py-4 rounded-xl gold-gradient text-black font-bold hover:glow-gold hover:scale-[1.02] transition disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
           >
-            Submit Review <ArrowRight className="h-5 w-5" />
+            {submitting ? "Submitting..." : "Submit Review"} <ArrowRight className="h-5 w-5" />
           </button>
+          {error && <p className="text-center text-sm text-red-400">{error}</p>}
         </form>
+
 
         <div className="mt-10 grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-5">
           {reviews.map((r, i) => (
-            <div key={i} className="glass-dark rounded-2xl p-5 md:p-6 border border-[#f5c545]/25 hover:border-[#f5c545]/60 transition">
+            <div key={r.id ?? i} className="glass-dark rounded-2xl p-5 md:p-6 border border-[#f5c545]/25 hover:border-[#f5c545]/60 transition">
               <div className="flex gap-0.5 text-gold mb-2">
                 {Array.from({ length: 5 }).map((_, k) => (
                   <Star key={k} className={`h-4 w-4 ${k < r.stars ? "fill-current" : "opacity-25"}`} />
