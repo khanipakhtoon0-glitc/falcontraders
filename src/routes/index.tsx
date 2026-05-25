@@ -567,7 +567,7 @@ function RateExperience() {
 
         <div className="mt-10 grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-5">
           {reviews.map((r, i) => (
-            <div key={i} className="glass-dark rounded-2xl p-5 md:p-6 border border-[#f5c545]/25 hover:border-[#f5c545]/60 transition">
+            <div key={r.id ?? i} className="glass-dark rounded-2xl p-5 md:p-6 border border-[#f5c545]/25 hover:border-[#f5c545]/60 transition">
               <div className="flex gap-0.5 text-gold mb-2">
                 {Array.from({ length: 5 }).map((_, k) => (
                   <Star key={k} className={`h-4 w-4 ${k < r.stars ? "fill-current" : "opacity-25"}`} />
