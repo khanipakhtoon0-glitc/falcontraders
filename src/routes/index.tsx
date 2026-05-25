@@ -797,8 +797,8 @@ function FloatingWhats() {
 
 /* -------------------- Page -------------------- */
 function Index() {
-  // Silence unused-import warning while keeping Award/TrendingUp available for future edits.
-  void Award;
+  // Silence unused-import warnings for icons/constants kept for future edits.
+  void Award; void Trophy; void TrendingUp; void RESULTS;
   return (
     <div className="min-h-screen bg-[#05070d] text-foreground overflow-x-hidden">
       <Nav />
