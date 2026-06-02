@@ -38,6 +38,30 @@ export type Database = {
         }
         Relationships: []
       }
+      video_play_events: {
+        Row: {
+          created_at: string
+          id: string
+          referrer: string | null
+          user_agent: string | null
+          video_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          referrer?: string | null
+          user_agent?: string | null
+          video_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          referrer?: string | null
+          user_agent?: string | null
+          video_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
