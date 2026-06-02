@@ -152,7 +152,6 @@ function Nav() {
 function Hero() {
   const [playing, setPlaying] = useState(false);
   const [visible, setVisible] = useState(false);
-  const wrapRef = useState<HTMLDivElement | null>(null)[0] as unknown as HTMLDivElement | null;
 
   useEffect(() => {
     const el = document.getElementById("hero-video-wrap");
