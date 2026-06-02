@@ -217,7 +217,16 @@ function Hero() {
                 />
                 <div className="absolute inset-0 bg-[#05070d]/40 group-hover:bg-[#05070d]/30 transition" />
                 <button
-                  onClick={() => setPlaying(true)}
+                  onClick={() => {
+                    setPlaying(true);
+                    supabase.from("video_play_events").insert({
+                      video_id: BRAND.promoVideoId,
+                      user_agent: typeof navigator !== "undefined" ? navigator.userAgent : null,
+                      referrer: typeof document !== "undefined" ? document.referrer : null,
+                    }).then(({ error }) => {
+                      if (error) console.error("play event error", error);
+                    });
+                  }}
                   className="absolute inset-0 flex items-center justify-center"
                   aria-label="Play promo video"
                 >
