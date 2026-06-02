@@ -30,8 +30,10 @@ const BRAND = {
   youtube: "https://youtube.com/@falcontraders-q7n",
   phone: "03052724783",
   email: "ahsanak0588@gmail.com",
-  // Paste a YouTube/Vimeo embed URL here later — leave empty to show placeholder.
-  promoVideoUrl: "",
+  // YouTube embed URL — used when the user clicks the play overlay.
+  promoVideoUrl: "https://www.youtube.com/embed/Zzvq7YXtzm0?autoplay=1&rel=0&modestbranding=1&playsinline=1",
+  promoVideoThumb: "https://img.youtube.com/vi/Zzvq7YXtzm0/maxresdefault.jpg",
+  promoVideoId: "Zzvq7YXtzm0",
 };
 
 const HERO = {
@@ -148,6 +150,20 @@ function Nav() {
 
 /* -------------------- Hero (single column, promo video slot) -------------------- */
 function Hero() {
+  const [playing, setPlaying] = useState(false);
+  const [visible, setVisible] = useState(false);
+
+  useEffect(() => {
+    const el = document.getElementById("hero-video-wrap");
+    if (!el) return;
+    const obs = new IntersectionObserver(
+      ([entry]) => { if (entry.isIntersecting) setVisible(true); },
+      { threshold: 0.15 }
+    );
+    obs.observe(el);
+    return () => obs.disconnect();
+  }, []);
+
   return (
     <section id="top" className="relative flex items-center overflow-hidden pt-24 md:pt-28 pb-10 md:pb-14">
       <div className="absolute inset-0">
@@ -171,10 +187,19 @@ function Hero() {
           {HERO.sub}
         </p>
 
-        {/* Promo video slot */}
-        <div className="mt-7 md:mt-9 max-w-3xl mx-auto">
+        {/* Promo video */}
+        <div
+          id="hero-video-wrap"
+          className={`mt-7 md:mt-9 max-w-3xl mx-auto transition-all duration-1000 ${visible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"}`}
+        >
+          <div className="mb-5 md:mb-6">
+            <h3 className="font-display text-xl md:text-3xl text-gold-gradient">Watch Falcon Trader In Action</h3>
+            <p className="mt-2 text-sm md:text-base text-muted-foreground max-w-xl mx-auto">
+              See how our community learns, grows, and trades smarter with Falcon Trader.
+            </p>
+          </div>
           <div className="relative glass-dark rounded-2xl md:rounded-3xl overflow-hidden aspect-video glow-gold group">
-            {BRAND.promoVideoUrl ? (
+            {playing ? (
               <iframe
                 src={BRAND.promoVideoUrl}
                 title="Falcon Trader Promo"
@@ -183,15 +208,24 @@ function Hero() {
                 className="absolute inset-0 w-full h-full"
               />
             ) : (
-              <div className="absolute inset-0 flex items-center justify-center text-center px-6">
-                <div>
-                  <div className="mx-auto w-16 h-16 md:w-20 md:h-20 rounded-full gold-gradient flex items-center justify-center glow-gold group-hover:scale-110 transition">
+              <>
+                <img
+                  src={BRAND.promoVideoThumb}
+                  alt="Falcon Trader Promo Thumbnail"
+                  className="absolute inset-0 w-full h-full object-cover"
+                  loading="lazy"
+                />
+                <div className="absolute inset-0 bg-[#05070d]/40 group-hover:bg-[#05070d]/30 transition" />
+                <button
+                  onClick={() => setPlaying(true)}
+                  className="absolute inset-0 flex items-center justify-center"
+                  aria-label="Play promo video"
+                >
+                  <div className="w-16 h-16 md:w-20 md:h-20 rounded-full gold-gradient flex items-center justify-center glow-gold group-hover:scale-110 transition duration-300">
                     <PlayCircle className="h-8 w-8 md:h-10 md:w-10 text-black" />
                   </div>
-                  <div className="mt-3 font-display text-lg md:text-2xl text-gold-gradient">Promo Video Coming Soon</div>
-                  <p className="mt-1 text-[11px] md:text-xs text-muted-foreground">A preview of Falcon Trader sessions is on its way.</p>
-                </div>
-              </div>
+                </button>
+              </>
             )}
           </div>
         </div>
