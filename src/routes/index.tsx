@@ -30,8 +30,10 @@ const BRAND = {
   youtube: "https://youtube.com/@falcontraders-q7n",
   phone: "03052724783",
   email: "ahsanak0588@gmail.com",
-  // Paste a YouTube/Vimeo embed URL here later — leave empty to show placeholder.
-  promoVideoUrl: "",
+  // YouTube embed URL — used when the user clicks the play overlay.
+  promoVideoUrl: "https://www.youtube.com/embed/Zzvq7YXtzm0?autoplay=1&rel=0&modestbranding=1&playsinline=1",
+  promoVideoThumb: "https://img.youtube.com/vi/Zzvq7YXtzm0/maxresdefault.jpg",
+  promoVideoId: "Zzvq7YXtzm0",
 };
 
 const HERO = {
