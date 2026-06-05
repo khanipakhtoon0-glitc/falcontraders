@@ -76,10 +76,14 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { name: "description", content: "Falcon Trader: premium crypto trading community for learning market structure, risk management, psychology, signals & live sessions." },
       { name: "author", content: "Falcon Trader" },
       { property: "og:title", content: "Falcon Trader — A Hub To Learn And Grow" },
-      { property: "og:description", content: "Join Falcon Trader, the premium crypto trading hub to learn, trade & grow." },
+      { property: "og:description", content: "Falcon Trader: premium crypto trading community for learning market structure, risk management, psychology, signals & live sessions." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
       { name: "twitter:site", content: "@Lovable" },
+      { name: "twitter:title", content: "Falcon Trader — A Hub To Learn And Grow" },
+      { name: "twitter:description", content: "Falcon Trader: premium crypto trading community for learning market structure, risk management, psychology, signals & live sessions." },
+      { property: "og:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/8e80dc27-7ed1-405f-b9df-b5b93c18877e/id-preview-72536dc4--77f390e0-a8e7-46e9-803a-e7952c1997f8.lovable.app-1780644161880.png" },
+      { name: "twitter:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/8e80dc27-7ed1-405f-b9df-b5b93c18877e/id-preview-72536dc4--77f390e0-a8e7-46e9-803a-e7952c1997f8.lovable.app-1780644161880.png" },
     ],
     links: [
       {
