@@ -911,7 +911,7 @@ function Index() {
         <Results />
         <StudentReviews />
         <RateExperience />
-        <Community />
+        
         <FAQ />
         <Social />
         <Contact />
