@@ -240,7 +240,11 @@ function Hero() {
         </div>
 
         <div className="mt-7 md:mt-9 flex flex-wrap gap-3 md:gap-4 justify-center">
-          <JourneyCTA size="lg" />
+          <a href={BRAND.whatsapp} target="_blank" rel="noopener noreferrer"
+             className="group relative inline-flex items-center gap-2.5 rounded-2xl gold-gradient text-black font-extrabold tracking-wide animate-pulse-glow hover:scale-[1.04] hover:shadow-[0_0_80px_rgba(245,197,69,0.7)] transition-all duration-500 px-9 py-5 md:px-11 md:py-6 text-base md:text-lg">
+            <span className="relative z-10">Join WhatsApp Community</span>
+            <ArrowRight className="h-5 w-5 relative z-10 group-hover:translate-x-1 transition" />
+          </a>
           <a href="#courses"
              className="inline-flex items-center gap-2 px-7 py-4 rounded-2xl border-2 border-[#34ffb0]/50 text-neon font-semibold hover:bg-[#34ffb0]/10 hover:glow-neon transition">
             Explore Curriculum
@@ -907,7 +911,7 @@ function Index() {
         <Results />
         <StudentReviews />
         <RateExperience />
-        <Community />
+        
         <FAQ />
         <Social />
         <Contact />
