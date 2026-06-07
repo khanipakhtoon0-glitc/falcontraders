@@ -457,7 +457,40 @@ function Results() {
   );
 }
 
+/* -------------------- Join Community -------------------- */
+function JoinCommunity() {
+  return (
+    <section className="relative py-16 md:py-24">
+      <div className="mx-auto max-w-3xl px-4 md:px-8">
+        <div className="glass-dark rounded-3xl p-8 md:p-12 text-center relative overflow-hidden">
+          <div className="absolute -top-32 -left-32 w-[400px] h-[400px] rounded-full bg-[#f5c545]/10 blur-3xl pointer-events-none" />
+          <div className="absolute -bottom-32 -right-32 w-[400px] h-[400px] rounded-full bg-[#34ffb0]/10 blur-3xl pointer-events-none" />
+          <div className="relative">
+            <div className="text-[10px] md:text-xs uppercase tracking-[0.3em] text-neon">Free Access</div>
+            <h2 className="mt-4 font-display text-3xl md:text-5xl text-gold-gradient leading-tight">
+              Join Our Trading Community
+            </h2>
+            <p className="mt-5 text-sm md:text-base text-muted-foreground max-w-xl mx-auto">
+              Daily setups, live discussions and direct mentor access — all inside one WhatsApp group.
+            </p>
+            <a
+              href={BRAND.whatsapp}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="mt-8 inline-flex items-center justify-center gap-3 w-full max-w-md px-8 py-5 rounded-2xl bg-[#34ffb0] text-black font-extrabold text-base md:text-lg hover:scale-[1.03] hover:shadow-[0_0_60px_rgba(52,255,176,0.6)] glow-neon transition-all duration-500"
+            >
+              <MessageCircle className="h-6 w-6" />
+              Join WhatsApp Community
+            </a>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
 /* -------------------- Rate Your Experience -------------------- */
+
 type RatingSubmission = { id?: string; stars: number; text: string; name: string };
 
 function RateExperience() {
@@ -910,6 +943,7 @@ function Index() {
         <Courses />
         <Results />
         <StudentReviews />
+        <JoinCommunity />
         <RateExperience />
         
         <FAQ />
