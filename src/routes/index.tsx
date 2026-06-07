@@ -910,6 +910,7 @@ function Index() {
         <Courses />
         <Results />
         <StudentReviews />
+        <JoinCommunity />
         <RateExperience />
         
         <FAQ />
