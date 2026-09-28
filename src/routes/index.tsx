@@ -27,7 +27,7 @@ const BRAND = {
   whatsapp: "https://chat.whatsapp.com/D6I8I4qKkWx7wCywemDZ0z",
   instagram: "https://www.instagram.com/falcontrader183",
   facebook: "https://www.facebook.com/share/1D4VkFCpMb/",
-  youtube: "https://youtube.com/@falcontraders-q7n",
+  youtube: "https://youtube.com/@falcontraders786?si=apJwZc2GJ4Y7ksJR",
   phone: "03052724783",
   email: "ahsanak0588@gmail.com",
   // YouTube embed URL — used when the user clicks the play overlay.
