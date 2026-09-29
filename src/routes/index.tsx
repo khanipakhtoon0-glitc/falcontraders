@@ -150,19 +150,6 @@ function Nav() {
 
 /* -------------------- Hero (single column, promo video slot) -------------------- */
 function Hero() {
-  const [playing, setPlaying] = useState(false);
-  const [visible, setVisible] = useState(false);
-
-  useEffect(() => {
-    const el = document.getElementById("hero-video-wrap");
-    if (!el) return;
-    const obs = new IntersectionObserver(
-      ([entry]) => { if (entry.isIntersecting) setVisible(true); },
-      { threshold: 0.15 }
-    );
-    obs.observe(el);
-    return () => obs.disconnect();
-  }, []);
 
   return (
     <section id="top" className="relative flex items-center overflow-hidden pt-24 md:pt-28 pb-10 md:pb-14">
@@ -187,57 +174,6 @@ function Hero() {
           {HERO.sub}
         </p>
 
-        {/* Promo video */}
-        <div
-          id="hero-video-wrap"
-          className={`mt-7 md:mt-9 max-w-3xl mx-auto transition-all duration-1000 ${visible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"}`}
-        >
-          <div className="mb-5 md:mb-6">
-            <h3 className="font-display text-xl md:text-3xl text-gold-gradient">Watch Falcon Trader In Action</h3>
-            <p className="mt-2 text-sm md:text-base text-muted-foreground max-w-xl mx-auto">
-              See how our community learns, grows, and trades smarter with Falcon Trader.
-            </p>
-          </div>
-          <div className="relative glass-dark rounded-2xl md:rounded-3xl overflow-hidden aspect-video glow-gold group">
-            {playing ? (
-              <iframe
-                src={BRAND.promoVideoUrl}
-                title="Falcon Trader Promo"
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                allowFullScreen
-                className="absolute inset-0 w-full h-full"
-              />
-            ) : (
-              <>
-                <img
-                  src={BRAND.promoVideoThumb}
-                  alt="Falcon Trader Promo Thumbnail"
-                  className="absolute inset-0 w-full h-full object-cover"
-                  loading="lazy"
-                />
-                <div className="absolute inset-0 bg-[#05070d]/40 group-hover:bg-[#05070d]/30 transition" />
-                <button
-                  onClick={() => {
-                    setPlaying(true);
-                    supabase.from("video_play_events").insert({
-                      video_id: BRAND.promoVideoId,
-                      user_agent: typeof navigator !== "undefined" ? navigator.userAgent : null,
-                      referrer: typeof document !== "undefined" ? document.referrer : null,
-                    }).then(({ error }) => {
-                      if (error) console.error("play event error", error);
-                    });
-                  }}
-                  className="absolute inset-0 flex items-center justify-center"
-                  aria-label="Play promo video"
-                >
-                  <div className="w-16 h-16 md:w-20 md:h-20 rounded-full gold-gradient flex items-center justify-center glow-gold group-hover:scale-110 transition duration-300">
-                    <PlayCircle className="h-8 w-8 md:h-10 md:w-10 text-black" />
-                  </div>
-                </button>
-              </>
-            )}
-          </div>
-        </div>
 
         <div className="mt-7 md:mt-9 flex flex-wrap gap-3 md:gap-4 justify-center">
           <a href={BRAND.whatsapp} target="_blank" rel="noopener noreferrer"
