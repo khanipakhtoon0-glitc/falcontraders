@@ -24,7 +24,7 @@ export const Route = createFileRoute("/")({ component: Index });
 const BRAND = {
   name: "FALCON TRADER",
   tagline: "A Hub To Learn And Grow",
-  whatsapp: "https://chat.whatsapp.com/D6I8I4qKkWx7wCywemDZ0z",
+  whatsapp: "https://chat.whatsapp.com/ExpgzeJmNtA5FkB6tNSY4g",
   instagram: "https://www.instagram.com/falcontrader183",
   facebook: "https://www.facebook.com/share/1D4VkFCpMb/",
   youtube: "https://youtube.com/@falcontraders786?si=apJwZc2GJ4Y7ksJR",
